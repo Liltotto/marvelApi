@@ -187,44 +187,9 @@ const CharList = () => {
             {errorMessage}
             {loadingMessage}
             {content}
-        </div>
+        </div> 
     )
 }
 
-// const View = (char, error, loading) => {
-//     const { name, thumbnail } = char
-
-//     const errorMessage = error ? <ErrorMessage /> : null
-//     const loadingMessage = loading ? <Loading /> : null
-//     const contentInside = () => {
-//         return (
-//             <>
-//                 <img src={thumbnail} alt="thumbnail" />
-//                 <div className="char__name">{name}</div>
-//             </>
-//         )
-//     }
-
-//     const content = !(loading || error) ? contentInside : null
-//     //const randomchar__img__class = thumbnail === 'http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg' ? 'randomchar__img not_found' : 'randomchar__img'
-
-//     const charCards = () => {
-//         for (let index = 0; index < 9; index++) {
-//             return (
-//                 <li className="char__item">
-//                     {errorMessage}
-//                     {loadingMessage}
-//                     {content}
-//                 </li>
-//             )
-//         }
-//     }
-
-//     return (
-//         <>
-//             {charCards()}
-//         </>
-//     )
-// }
 
 export default CharList;
