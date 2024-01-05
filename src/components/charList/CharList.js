@@ -88,19 +88,14 @@ const CharList = memo(function CharList() {
         if(localStorage.getItem('storageOffset') && loading) {
             
             const oldOffset = JSON.parse(localStorage.getItem('storageOffset')) 
-            //setOffset(oldOffset)
-            //setLimit(oldOffset - offset)
-            //setOffset((prev) => prev + oldOffset - offset)
+            
             console.log(oldOffset - offset);
-            //console.log(limit);
+           
             console.log(oldOffset);
             console.log(offset);
             setCharsToCards(oldOffset - offset + 9, offset)
             
-            //console.log(offset);
-            //etCharsToCards()
-            
-            //setLimit(9)
+          
            
         }
         
@@ -114,7 +109,7 @@ const CharList = memo(function CharList() {
     }, [])
 
     useEffect(() => {
-       // if(loading && localStorage.getItem('storageOffset')) return
+       
         if(localStorage.getItem('storageOffset') && loading) return
         setCharsToCards()
     
@@ -131,10 +126,6 @@ const CharList = memo(function CharList() {
     }, 200); 
     
     function onScroll() {
-        
-        // console.log(window.innerHeight + window.scrollY);
-        // console.log('offsetHeight:' + document.body.offsetHeight);
-        //console.log(offset);
 
         if (newLoading) return
 
