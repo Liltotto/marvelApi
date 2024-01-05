@@ -1,7 +1,7 @@
 import './charInfo.scss';
 
 
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 
 
 import MarvelService from '../../services/MarvelService';
@@ -10,7 +10,7 @@ import Loading from '../loading/Loading';
 import Skeleton from '../skeleton/Skeleton';
 import { CharId } from '../../context/context';
 
-const CharInfo = () => {
+const CharInfo = ({ forwardedRef }) => {
 
     const {charId} = useContext(CharId)
 
@@ -20,7 +20,7 @@ const CharInfo = () => {
 
     const [error, setError] = useState(false)
 
-
+    const charInfoRefInside = useRef(null)
 
     const marvelService = new MarvelService();
 
@@ -34,6 +34,7 @@ const CharInfo = () => {
             .then(res => {
                 setChar(res)
                 setLoading(false)
+                charInfoRefInside.current.scrollIntoView({behavior: 'smooth'})
             })
             .catch(() => {
                 setLoading(false)
@@ -60,6 +61,7 @@ const CharInfo = () => {
     return (
         <div 
             className="char__info"
+            ref={charInfoRefInside}
             >
             {skeleton}
             {errorMessage}

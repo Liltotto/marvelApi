@@ -1,5 +1,7 @@
 import './charList.scss';
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext, useRef, memo } from 'react';
+import { debounce } from 'lodash';
+
 import MarvelService from '../../services/MarvelService';
 import ErrorMessage from '../error/ErrorMessage';
 import Loading from '../loading/Loading';
@@ -7,9 +9,11 @@ import Loading from '../loading/Loading';
 import CharItem from '../charItem/CharItem';
 // import { CharId } from '../../context/context';
 
-const CharList = () => {
+const CharList = memo(function CharList() {
 
     // const {charId, setCharId} = useContext(CharId)
+
+    const charItemsRef = useRef([])
 
     const [chars, setChars] = useState([])
 
@@ -28,8 +32,6 @@ const CharList = () => {
     //const [localStorageLoading, setLocalStorageLoading] = useState(false)
 
     const [countOfEndOfPage, setCountEndOfPage] = useState(0)
-
-
 
     
 
@@ -73,6 +75,8 @@ const CharList = () => {
             })
     }
 
+   
+
     useEffect(() => {
         
         
@@ -100,11 +104,12 @@ const CharList = () => {
            
         }
         
-        window.addEventListener("scroll", () => onScroll())
+        window.addEventListener("scroll", onScroll)
 
-        return (
-            window.removeEventListener("scroll", () => onScroll())
-        )
+        return () => {
+            window.removeEventListener('scroll', onScroll);
+            debouncedOnScroll.cancel();
+        }
 
     }, [])
 
@@ -113,9 +118,17 @@ const CharList = () => {
         if(localStorage.getItem('storageOffset') && loading) return
         setCharsToCards()
     
-        
+        console.log("countOfEndOfPage: " + countOfEndOfPage);
     }, [countOfEndOfPage])
 
+    const debouncedOnScroll = debounce(() => {
+        if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
+            setCountEndOfPage((prev) => prev + 1);
+            console.log("Array charItemsRef: " + charItemsRef.current);
+            console.log("Length charItemsRef: " + charItemsRef.current.length);
+        }
+        
+    }, 200); 
     
     function onScroll() {
         
@@ -126,12 +139,10 @@ const CharList = () => {
         if (newLoading) return
 
         if (charsEnded) {
-            window.removeEventListener("scroll", () => onScroll());
+            window.removeEventListener("scroll", onScroll);
         }
 
-        if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
-            setCountEndOfPage((prev) => prev + 1)
-        }
+        debouncedOnScroll()
     }
 
 
@@ -152,8 +163,8 @@ const CharList = () => {
     
 
     const charItems = chars.map((props) => {
-
-        return <CharItem key={props.id} {...props} />
+    
+        return <CharItem ref={charItemsRef} key={props.id} {...props} />
     })
 
     const charListInside = () => {
@@ -167,7 +178,7 @@ const CharList = () => {
                 <button
                     style={{ display: charsEnded ? 'none' : "block" }}
                     onClick={() => {
-                        setOffset((prev) => prev + 9)
+                        setCountEndOfPage((prev) => prev + 1)
                     }}
                     disabled={newLoading}
                     className="button button__main button__long"
@@ -189,7 +200,7 @@ const CharList = () => {
             {content}
         </div> 
     )
-}
+})
 
 
 export default CharList;

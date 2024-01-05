@@ -6,13 +6,15 @@ import CharInfo from "../charInfo/CharInfo";
 import decoration from '../../resources/img/vision.png';
 
 import { CharId } from "../../context/context";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 
 
 const App = () => {
 
     const [charId, setCharId] = useState(null)
+
+    const charInfoRef = useRef(null)
 
     return (
         <CharId.Provider value={{
