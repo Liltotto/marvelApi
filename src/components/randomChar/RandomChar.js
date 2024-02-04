@@ -1,41 +1,36 @@
 import './randomChar.scss';
 import mjolnir from '../../resources/img/mjolnir.png';
 import { useState, useEffect } from 'react';
-import MarvelService from '../../services/MarvelService';
+import useMarvelService from '../../services/MarvelService';
 import Loading from '../loading/Loading';
 import ErrorMessage from '../error/ErrorMessage';
 
 const RandomChar = () => {
 
+    const {loading, error, clearError, getCharacter} = useMarvelService();
+
     const [char, setChar] = useState({})
 
-    const [loading, setLoading] = useState(true)
+    // const [loading, setLoading] = useState(true)
 
-    const [error, setError] = useState(false)
+    // const [error, setError] = useState(false)
 
 
 
-    const marvelService = new MarvelService();
+    //const marvelService = new MarvelService();
 
     const updateChar = () => {
+        clearError()
         const id = Math.floor(Math.random() * (1011400 - 1011000) + 1011000)
-        setError(false)
-        setLoading(true)
 
-        marvelService
-            .getCharacter(id)
+        getCharacter(id)
             .then(res => {
-                setChar(res)
-                setLoading(false)
-                
-            })
-            .catch(() => {
-                setLoading(false)
-                setError(true)
+                setChar(res)        
             })
     }
 
     useEffect(() => {
+        console.log('loading ' + loading);
         updateChar()
     }, [])
 

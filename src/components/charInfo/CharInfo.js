@@ -4,52 +4,49 @@ import './charInfo.scss';
 import { useContext, useEffect, useRef, useState } from 'react';
 
 
-import MarvelService from '../../services/MarvelService';
+import useMarvelService from '../../services/MarvelService';
 import ErrorMessage from '../error/ErrorMessage';
 import Loading from '../loading/Loading';
 import Skeleton from '../skeleton/Skeleton';
 import { CharId } from '../../context/context';
+import { Link } from 'react-router-dom';
 
-const CharInfo = ({ forwardedRef }) => {
 
-    const {charId} = useContext(CharId)
+const CharInfo = () => {
+
+    const { loading, error, clearError, getCharacter } = useMarvelService();
+
+    const { charId } = useContext(CharId)
 
     const [char, setChar] = useState(false)
 
-    const [loading, setLoading] = useState(false)
+    // const [loading, setLoading] = useState(false)
 
-    const [error, setError] = useState(false)
+    // const [error, setError] = useState(false)
 
     const charInfoRefInside = useRef(null)
 
-    const marvelService = new MarvelService();
 
     const updateChar = (id) => {
         console.log(id);
-        setError(false)
-        setLoading(true)
-
-        marvelService
-            .getCharacter(id)
+        clearError()
+        getCharacter(id)
             .then(res => {
                 setChar(res)
-                setLoading(false)
-                charInfoRefInside.current.scrollIntoView({behavior: 'smooth'})
+
+                charInfoRefInside.current.scrollIntoView({ behavior: 'smooth' })
             })
-            .catch(() => {
-                setLoading(false)
-                setError(true)
-            })
+
     }
 
     useEffect(() => {
         console.log('aaa');
-        if(!charId){
+        if (!charId) {
             //setLoading(false)
             return
         }
         updateChar(charId)
-        
+
     }, [charId])
 
     const skeleton = char || loading || error ? null : <Skeleton />
@@ -59,10 +56,10 @@ const CharInfo = ({ forwardedRef }) => {
 
 
     return (
-        <div 
+        <div
             className="char__info"
             ref={charInfoRefInside}
-            >
+        >
             {skeleton}
             {errorMessage}
             {loadingMessage}
@@ -76,30 +73,11 @@ const View = ({ char }) => {
 
     const { name, description, thumbnail, homepage, wiki, comics } = char
 
-    // console.log(comics);
-
-    // const comicsList = []
-    // if(comics.length != 0) {
-    //     for (let i = 0; i < 9; i++) {
-    //         comicsList.push(             
-    //             <li
-    //                 key={i}
-    //                 className="char__comics-item">
-    //                 {comics[i].name}
-    //             </li>
-    //         )
-            
-    //     }
-    // }
-
     const comicsList = comics.slice(0, 9)
 
-    // if(comics.length > 9) {
-    //     comics.length = 9
-    // }
-    
+    //console.log('aaaaaaaaaaaaa' + comicsList[0].resourceURI.split('/')[]); 
 
-    const styleForNotFound = thumbnail === 'http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg' ? {objectFit: 'fill'} : null
+    const styleForNotFound = thumbnail === 'http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg' ? { objectFit: 'fill' } : null
 
     return (
         <>
@@ -122,16 +100,17 @@ const View = ({ char }) => {
             </div>
             <div className="char__comics">Comics:</div>
             <ul className="char__comics-list">
-                { !comics.length ? 'There is no comics about this character' : 
+                {!comics.length ? 'There is no comics about this character' :
                     comicsList.map((comic, i) => {
                         return (
-                            <li
-                                key={i}
-                                className="char__comics-item">
-                                {comic.name}
-                            </li>
+                            <Link key={i} className="char__comics-item" to={`/comics/${comic.resourceURI.split('/').at(-1)}`}>
+                                <li>
+                                    {comic.name}
+                                </li>
+                            </Link>
+
                         )
-                })} 
+                    })}
             </ul>
         </>
     )

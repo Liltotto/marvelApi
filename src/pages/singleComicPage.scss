@@ -1,4 +1,4 @@
-@import '../../style/variables.scss';
+@import '../style/variables.scss';
 
 .single-comic {
     margin-top: 50px;
@@ -30,10 +30,25 @@
     &__back {
         justify-self: end;
         font-weight: bold;
-        font-size: 18px;
+        font-size: 20px;
         line-height: 24px;
+        border: 0;
+        background-color: white;
         &:hover {
             color: $main-color;
         }
     }
+    &__errorBack {
+        font-size: 40px;
+        font-weight: bold;
+        //line-height: 24px;
+        &:hover {
+            color: $main-color;
+        }
+    }
+}
+
+.single-char__img {
+    width: 293px;
+    height: 293px;
 }
