@@ -1,5 +1,5 @@
 import './charList.scss';
-import { useState, useEffect, useContext, useRef, memo } from 'react';
+import { useState, useEffect, useContext, useRef, memo, useCallback, useMemo } from 'react';
 import { debounce } from 'lodash';
 
 
@@ -11,10 +11,30 @@ import CharItem from '../charItem/CharItem';
 
 import { CSSTransition } from 'react-transition-group';
 
+
+function setContent(process, Component, newLoading) {
+
+    console.log('ttt ' + newLoading);
+    console.log('process ' + process);
+    switch (process) {
+        case 'waiting':
+            return <Loading />
+        case 'loading':
+            return newLoading ? <Component /> : <Loading />
+        case 'confirmed':
+            return <Component />
+        case 'error':
+            return <ErrorMessage />
+        default:
+            throw new Error('Unexpected process state');
+    }
+}
+
+
 const CharList = memo(function CharList() {
 
 
-    const { loading, error, clearError, getSomeCharacters } = useMarvelService();
+    const { loading, error, clearError, getSomeCharacters, process, setProcess } = useMarvelService();
 
     const charItemsRef = useRef([])
 
@@ -24,6 +44,8 @@ const CharList = memo(function CharList() {
 
     const [charsEnded, setCharsEnded] = useState(false)
 
+    const [firstLoaded, setFirstLoaded] = useState(false)
+
     const [newLoading, setNewLoading] = useState(false)
 
     const [localStorageLoaded, setLocalStorageLoaded] = useState(false)
@@ -32,6 +54,8 @@ const CharList = memo(function CharList() {
 
     const [countOfCardsLoaded, setCountOfCardsLoaded] = useState(0)
 
+
+    
 
 
     const setCharsToCards = (limit = 9, currentOffset = offset) => {
@@ -59,10 +83,13 @@ const CharList = memo(function CharList() {
 
                 setPageEnded(false)
                 setCountOfCardsLoaded(prev => prev + 1)
-
+                if(!firstLoaded) {
+                    setFirstLoaded(true)
+                }
                 console.log(chars);
 
             })
+            .then(() => setProcess('confirmed'))
     }
 
 
@@ -153,6 +180,9 @@ const CharList = memo(function CharList() {
         )
     }
 
+    const result = useMemo(()=>{
+        return setContent(process, () => charListInside(), firstLoaded)
+    }, [process])
 
     const items = charListInside()
 
@@ -161,6 +191,7 @@ const CharList = memo(function CharList() {
 
     return (
         <div className="char__list">
+            {/* {result} */}
             {errorMessage}
             {loadingMessage}
             {items}

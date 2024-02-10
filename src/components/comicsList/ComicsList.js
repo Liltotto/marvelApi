@@ -91,7 +91,11 @@ const ComicsList = () => {
     }, [pageEnded])
 
     const debouncedOnScroll = debounce(() => {
-        if ((window.innerHeight + window.scrollY >= document.body.offsetHeight) && !pageEnded && !newLoading) {
+        console.log(window.innerHeight);
+        console.log(window.scrollY);
+        console.log(document.body.offsetHeight - window.innerHeight - window.scrollY);
+
+        if ((window.innerHeight + window.scrollY >= document.body.offsetHeight - 1) && !pageEnded && !newLoading) {
             setPageEnded(true);
             console.log('page ended');
 
@@ -107,7 +111,7 @@ const ComicsList = () => {
             window.removeEventListener("scroll", onScroll);
         }
 
-        debouncedOnScroll()
+        debouncedOnScroll() FSM
     }
 
     const comicItems = comics.map(({title, price, thumbnail, id}, i) => {

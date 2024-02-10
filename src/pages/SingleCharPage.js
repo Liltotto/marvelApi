@@ -6,6 +6,8 @@ import ErrorMessage from '../components/error/ErrorMessage';
 import Loading from '../components/loading/Loading';
 import AppBanner from '../components/appBanner/AppBanner';
 import Helmet from "react-helmet";
+import setContent from '../utils/setContent';
+
 import './singleComicPage.scss';
 //import xMen from '../resources/img/x-men.png';
 
@@ -17,7 +19,7 @@ const SingleComicPage = () => {
 
 
 
-    const { loading, error, clearError, getCharacter } = useMarvelService();
+    const { loading, error, clearError, getCharacter, process, setProcess } = useMarvelService();
 
     const [char, setChar] = useState(null)
 
@@ -36,6 +38,7 @@ const SingleComicPage = () => {
                 console.log(res);
                 setChar(res)
             })
+            .then(() => setProcess('confirmed'))
             .catch((err) => {
                 console.log(err);
             })
@@ -49,22 +52,17 @@ const SingleComicPage = () => {
     }, [charId])
 
 
-    const errorMessage = error ? <ErrorMessage /> : null
-    const loadingMessage = loading ? <Loading /> : null
-    const content = !(loading || error || !char) ? <View char={char} /> : null
     ///                      ДОРАБОТАЙ ЧУТЬ ПОЗЖЕ
 
     return (
         <>
-            {errorMessage}
-            {loadingMessage}
-            {content}
+            {setContent(process, View, char)}
         </>
     )
 }
 
-const View = ({ char }) => {
-    const { name, description, thumbnail } = char
+const View = ({ data }) => {
+    const { name, description, thumbnail } = data
 
     const navigate = useNavigate();
 

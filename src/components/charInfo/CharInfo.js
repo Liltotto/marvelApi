@@ -5,16 +5,17 @@ import { useContext, useEffect, useRef, useState } from 'react';
 
 
 import useMarvelService from '../../services/MarvelService';
-import ErrorMessage from '../error/ErrorMessage';
-import Loading from '../loading/Loading';
-import Skeleton from '../skeleton/Skeleton';
+// import ErrorMessage from '../error/ErrorMessage';
+// import Loading from '../loading/Loading';
+// import Skeleton from '../skeleton/Skeleton';
+import setContent from '../../utils/setContent';
 import { CharId } from '../../context/context';
 import { Link } from 'react-router-dom';
 
 
 const CharInfo = () => {
 
-    const { loading, error, clearError, getCharacter } = useMarvelService();
+    const { loading, error, clearError, process, setProcess, getCharacter } = useMarvelService();
 
     const { charId } = useContext(CharId)
 
@@ -36,23 +37,35 @@ const CharInfo = () => {
 
                 charInfoRefInside.current.scrollIntoView({ behavior: 'smooth' })
             })
+            .then(()=> setProcess('confirmed'))
 
     }
 
     useEffect(() => {
-        console.log('aaa');
         if (!charId) {
-            //setLoading(false)
             return
         }
         updateChar(charId)
 
     }, [charId])
 
-    const skeleton = char || loading || error ? null : <Skeleton />
-    const errorMessage = error ? <ErrorMessage /> : null
-    const loadingMessage = loading ? <Loading /> : null
-    const content = !(loading || error || !char) ? <View char={char} /> : null
+    // const setContent = () => {
+    //     switch(process){
+    //         case 'waiting':
+    //             return <Skeleton />
+    //         case 'loading':
+    //             return <Loading />
+    //         case 'confirmed':
+    //             return <View char={char} />
+    //         case 'error':
+    //             return <ErrorMessage />
+    //     }
+    // }
+
+    // const skeleton = char || loading || error ? null : <Skeleton />
+    // const errorMessage = error ? <ErrorMessage /> : null
+    // const loadingMessage = loading ? <Loading /> : null
+    // const content = !(loading || error || !char) ? <View char={char} /> : null
 
 
     return (
@@ -60,18 +73,15 @@ const CharInfo = () => {
             className="char__info"
             ref={charInfoRefInside}
         >
-            {skeleton}
-            {errorMessage}
-            {loadingMessage}
-            {content}
+            {setContent(process, View, char)}
         </div>
     )
 }
 
 
-const View = ({ char }) => {
+const View = ({ data }) => {
 
-    const { name, description, thumbnail, homepage, wiki, comics } = char
+    const { name, description, thumbnail, homepage, wiki, comics } = data
 
     const comicsList = comics.slice(0, 9)
 

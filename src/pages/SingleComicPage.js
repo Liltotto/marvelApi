@@ -9,7 +9,7 @@ import './singleComicPage.scss';
 import AppBanner from '../components/appBanner/AppBanner';
 //import xMen from '../resources/img/x-men.png';
 
-
+import setContent from '../utils/setContent';
 
 const SingleComicPage = () => {
 
@@ -17,7 +17,7 @@ const SingleComicPage = () => {
 
 
 
-    const { loading, error, clearError, getComic } = useMarvelService();
+    const { loading, error, clearError, getComic, process, setProcess } = useMarvelService();
 
     const [comic, setComic] = useState(null)
 
@@ -36,6 +36,7 @@ const SingleComicPage = () => {
                 console.log(res);
                 setComic(res)
             })
+            .then(() => setProcess('confirmed'))
             .catch((err) => {
                 console.log(err);
             })
@@ -49,22 +50,20 @@ const SingleComicPage = () => {
     }, [comicId])
 
 
-    const errorMessage = error ? <ErrorMessage /> : null
-    const loadingMessage = loading ? <Loading /> : null
-    const content = !(loading || error || !comic) ? <View comic={comic} /> : null
+    // const errorMessage = error ? <ErrorMessage /> : null
+    // const loadingMessage = loading ? <Loading /> : null
+    // const content = !(loading || error || !comic) ? <View comic={comic} /> : null
     ///                      ДОРАБОТАЙ ЧУТЬ ПОЗЖЕ
 
     return (
         <>
-            {errorMessage}
-            {loadingMessage}
-            {content}
+            {setContent(process, View, comic)}
         </>
     )
 }
 
-const View = ({ comic }) => {
-    const { title, description, pageCount, thumbnail, language, price } = comic
+const View = ({ data }) => {
+    const { title, description, pageCount, thumbnail, language, price } = data
 
     const navigate = useNavigate();
 
