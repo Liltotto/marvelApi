@@ -111,7 +111,7 @@ const ComicsList = () => {
             window.removeEventListener("scroll", onScroll);
         }
 
-        debouncedOnScroll() FSM
+        debouncedOnScroll() 
     }
 
     const comicItems = comics.map(({title, price, thumbnail, id}, i) => {
